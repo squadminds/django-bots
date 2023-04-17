@@ -18,7 +18,6 @@ if __version_info__ < (20, 0, 0, "alpha", 1):
 from telegram import *
 from telegram.constants import ParseMode
 from telegram.ext import *
-# from telegram.ext import Updater, InlineQueryHandler
 import openai
 import random
 
@@ -48,13 +47,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def inline_query(update:Update, context: CallbackContext):
     try:
         query = update.inline_query.query
-        print(query)
         if query == "":
             return
 
         endpoint = 'https://api.unsplash.com/search/photos'
         params = {
-            'per_page' : 24,
+            'per_page' : 55,
             'query': query,
             'client_id': UNSPLASH_ACCESS_KEY
         }
@@ -78,6 +76,33 @@ async def inline_query(update:Update, context: CallbackContext):
         await context.bot.answer_inline_query(update.inline_query.id, result)
     except Exception as e:
         return
+
+    # try:
+    #     images = []
+    #     query = update.inline_query.query
+    #     if query == "":
+    #         return
+    #     response = openai.Image.create(
+    #     prompt=query,
+    #     n=10,
+    #     size="1024x1024"
+    #     ) 
+    #     for i in response['data']:
+    #         url = i['url']
+    #         images.append(url)
+    #     result = []        
+    #     for idx, image_url in enumerate(image_urls):
+    #             photo_result = InlineQueryResultPhoto(
+    #                 id=idx,
+    #                 photo_url=image_url,
+    #                 thumbnail_url=image_url,
+    #                 photo_height=100,
+    #                 photo_width=100
+    #             )
+    #             result.append(photo_result)
+    #     await context.bot.answer_inline_query(update.inline_query.id, result)
+    # except Exception as e:
+    #     return
 
 async def handle_message(update: Update, context):
     user_input = update.message.text
